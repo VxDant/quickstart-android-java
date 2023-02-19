@@ -47,6 +47,7 @@ import ai.deepar.ar.AREventListener;
 import ai.deepar.ar.CameraResolutionPreset;
 import ai.deepar.ar.DeepAR;
 import ai.deepar.ar.DeepARImageFormat;
+import ai.deepar.deepar_example.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback, AREventListener {
 
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private boolean buffersInitialized = false;
     private static final int NUMBER_OF_BUFFERS=2;
     private static final boolean useExternalCameraTexture = true;
+
+    private ActivityMainBinding binding;
 
     private DeepAR deepAR;
 
@@ -82,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
     }
 
     @Override
@@ -143,27 +147,22 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     }
 
     private void initalizeViews() {
-        ImageButton previousMask = findViewById(R.id.previousMask);
-        ImageButton nextMask = findViewById(R.id.nextMask);
 
-        SurfaceView arView = findViewById(R.id.surface);
-
-        arView.getHolder().addCallback(this);
+        binding.surface.getHolder().addCallback(this);
 
         // Surface might already be initialized, so we force the call to onSurfaceChanged
-        arView.setVisibility(View.GONE);
-        arView.setVisibility(View.VISIBLE);
+        binding.surface.setVisibility(View.GONE);
+        binding.surface.setVisibility(View.VISIBLE);
 
-        final ImageButton screenshotBtn = findViewById(R.id.recordButton);
-        screenshotBtn.setOnClickListener(new View.OnClickListener() {
+//
+        binding.screenshotModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deepAR.takeScreenshot();
             }
         });
 
-        ImageButton switchCamera = findViewById(R.id.switchCamera);
-        switchCamera.setOnClickListener(new View.OnClickListener() {
+        binding.switchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 lensFacing = lensFacing ==  CameraSelector.LENS_FACING_FRONT ?  CameraSelector.LENS_FACING_BACK :  CameraSelector.LENS_FACING_FRONT ;
@@ -181,8 +180,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             }
         });
 
-        ImageButton openActivity = findViewById(R.id.openActivity);
-        openActivity.setOnClickListener(new View.OnClickListener() {
+
+        binding.openActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, BasicActivity.class);
@@ -193,13 +192,10 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         });
 
 
-        final TextView screenShotModeButton = findViewById(R.id.screenshotModeButton);
-        final TextView recordModeBtn = findViewById(R.id.recordModeButton);
+        binding.recordModeButton.getBackground().setAlpha(0x00);
+        binding.screenshotModeButton.getBackground().setAlpha(0xA0);
 
-        recordModeBtn.getBackground().setAlpha(0x00);
-        screenShotModeButton.getBackground().setAlpha(0xA0);
-
-        screenShotModeButton.setOnClickListener(new View.OnClickListener() {
+        binding.screenshotModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(currentSwitchRecording) {
@@ -208,9 +204,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                         return;
                     }
 
-                    recordModeBtn.getBackground().setAlpha(0x00);
-                    screenShotModeButton.getBackground().setAlpha(0xA0);
-                    screenshotBtn.setOnClickListener(new View.OnClickListener() {
+                    binding.recordModeButton.getBackground().setAlpha(0x00);
+                    binding.screenshotModeButton.getBackground().setAlpha(0xA0);
+                    binding.recordButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             deepAR.takeScreenshot();
@@ -224,15 +220,15 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
 
 
-        recordModeBtn.setOnClickListener(new View.OnClickListener() {
+        binding.recordModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if(!currentSwitchRecording) {
 
-                    recordModeBtn.getBackground().setAlpha(0xA0);
-                    screenShotModeButton.getBackground().setAlpha(0x00);
-                    screenshotBtn.setOnClickListener(new View.OnClickListener() {
+                    binding.recordModeButton.getBackground().setAlpha(0xA0);
+                    binding.screenshotModeButton.getBackground().setAlpha(0x00);
+                    binding.recordButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if(recording) {
@@ -252,14 +248,14 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             }
         });
 
-        previousMask.setOnClickListener(new View.OnClickListener() {
+        binding.previousMask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 gotoPrevious();
             }
         });
 
-        nextMask.setOnClickListener(new View.OnClickListener() {
+        binding.nextMask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 gotoNext();
